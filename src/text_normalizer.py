@@ -27,17 +27,15 @@ lemmatizer = WordNetLemmatizer()
 
 def remove_html_tags(text: str) -> str:
     """
-    Remove html tags from text like <br/> , etc. You can use BeautifulSoup for this.
+    Remove html tags from text like <br/> , etc. BeautifulSoup for this.
 
     Args:
         text : str
             Input string.
-
     Return:
         str
             Output string.
     """
-    # TODO
     texto = BeautifulSoup(text, 'html.parser') 
     return texto.get_text()
 
@@ -45,19 +43,16 @@ def remove_html_tags(text: str) -> str:
 def stem_text(text: str) -> str:
     """
     Stem input string.
-    (*) Hint:
-        - Use `nltk.porter.PorterStemmer` to pass this test.
+        - Use `nltk.porter.PorterStemmer`
         - Use `nltk.tokenize.word_tokenize` for tokenizing the sentence.
 
     Args:er
         text : str
             Input string.
-
     Return:
         str
             Output string.
     """
-    # TODO
     # Tokenizar el texto en palabras
     tokens = word_tokenize(text)
 
@@ -83,7 +78,6 @@ def lemmatize_text(text: str) -> str:
         str
             Output string.
     """
-    # TODO
     # Tokenizar el texto utilizando el modelo nlp de SpaCy
     doc = nlp(text)
 
@@ -106,7 +100,6 @@ def remove_accented_chars(text: str) -> str:
         str
             Output string.
     """
-    # TODO
     # Normalizar el texto para separar los caracteres acentuados en sus componentes
     normalized_text = unicodedata.normalize('NFKD', text)
 
@@ -130,7 +123,6 @@ def remove_special_chars(text: str, remove_digits: Optional[bool] = False) -> st
         str
             Output string.
     """
-    # TODO
     if remove_digits:
         filtered_doc = re.sub(r'[^A-Za-z\s]+', '',text)
     else:
@@ -161,7 +153,6 @@ def remove_stopwords(
         str
             Output string.
     """
-    # TODO
     # Inicializar el tokenizer
     tokenizer = ToktokTokenizer()
 
@@ -193,7 +184,6 @@ def remove_extra_new_lines(text: str) -> str:
         str
             Output string.
     """
-    # TODO
     # Eliminar líneas adicionales y tabulaciones
     cleaned_text = ' '.join(text.splitlines())
 
@@ -212,7 +202,6 @@ def remove_extra_whitespace(text: str) -> str:
         str
             Output string.
     """
-    # TODO
     # Eliminar espacios en blanco adicionales
     cleaned_text = ' '.join(text.split())
 
