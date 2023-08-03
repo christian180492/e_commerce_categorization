@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Historial de Productos Ingresados</title>
+</head>
+<body>
+    <h1>Historial de Productos Ingresados</h1>
+    {% if productos %}
+    <ul>
+        {% for producto in productos %}
+            <li>
+                <strong>Nombre:</strong> {{ producto.nombre }}<br>
+                <strong>Descripción:</strong> {{ producto.descripcion }}<br>
+                {% if producto.imagen %}
+                    <strong>Imagen:</strong><br>
+                    <img src="{{ url_for('static', filename='imagenes/' + producto.imagen) }}" alt="{{ producto.imagen }}" width="200"><br>
+                {% endif %}
+                <strong>Categorías:</strong>
+                <ul>
+                    {% for categoria in producto.categorias %}
+                        <li>{{ categoria }}</li>
+                    {% endfor %}
+                </ul>
+                <br>
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No hay productos ingresados</p>
+    {% endif %}
+    <a href="/">Cargar nuevo producto</a>
+</body>
+</html>
+

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Página de Producto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Introduce los datos del producto</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <label for="nombre">Nombre del producto:</label>
+        <input type="text" name="nombre" required>
+        <br>
+        <label for="descripcion">Descripción:</label>
+        <textarea name="descripcion" required></textarea>
+        <br>
+        <label for="imagen">Imagen (opcional):</label>
+        <input type="file" name="imagen">
+        <br>
+        <input type="submit" value="Enviar">
+    </form>
+    <br>
+    <a href="/historial">Ver historial de productos</a>
+</body>
+</html>
+

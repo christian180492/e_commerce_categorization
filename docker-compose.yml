@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+    environment:
+      - FLASK_ENV=development
+      - REDIS_HOST=redis
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  modelo:
+    build:
+      context: ./modelo
+      dockerfile: Dockerfile
+    volumes:
+      - ./api/static/imagenes:/app/api/static/imagenes
+      - ./modelos:/app/modelos
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+
+volumes:
+  redis_data:
