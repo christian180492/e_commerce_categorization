@@ -31,11 +31,11 @@ services:
     volumes:
       - ./api/static/imagenes:/app/api/static/imagenes
       - ./modelos:/app/modelos
+      - ./src:/app/src
     depends_on:
       - redis
     networks:
       - app-network
-
 
 networks:
   app-network:
