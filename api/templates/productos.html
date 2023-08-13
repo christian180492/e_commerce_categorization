@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Producto Ingresado</title>
+    <title>Product Entered</title>
 </head>
 <body>
     {% if producto %}
-    <h1>Producto Ingresado</h1>
-    <strong>Nombre:</strong> {{ producto.nombre }}<br>
-    <strong>Descripción:</strong> {{ producto.descripcion }}<br>
+    <h1>Product Entered</h1>
+    <strong>Name:</strong> {{ producto.nombre }}<br>
+    <strong>Description:</strong> {{ producto.descripcion }}<br>
     {% if producto.imagen %}
-        <strong>Imagen:</strong><br>
+        <strong>Image:</strong><br>
         <img src="{{ url_for('static', filename='imagenes/' + producto.imagen) }}" alt="{{ producto.imagen }}" width="200"><br>
     {% endif %}
-    <strong>Categorías:</strong>
+    <strong>Categories:</strong>
     <ul>
         {% for categoria in producto.categorias %}
             <li>{{ categoria }}</li>
         {% endfor %}
     </ul>
     {% else %}
-    <h1>No hay productos ingresados</h1>
+    <h1>There are no products entered</h1>
     {% endif %}
-    <a href="/">Cargar nuevo producto</a>
+    <a href="/">Charge new product</a>
 </body>
 </html>

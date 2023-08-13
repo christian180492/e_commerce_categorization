@@ -1,17 +1,14 @@
-# Usamos una imagen base de Python
+# We use a python base image
 FROM python:3.10
 
-# Establecemos el directorio de trabajo
+# Set the working directory
 WORKDIR /app
 
-# Copiamos el código de la aplicación en el contenedor
+# We copy the code of the application in the container
 COPY . /app/
 
-# Instalamos las dependencias de la aplicación
+# Install the application dependencies
 RUN pip install -r requirements.txt
 
-# Exponemos el puerto que usará el servicio modelo (opcional, si lo necesitas)
-# EXPOSE 8000
-
-# Ejecutamos el archivo modelo.py
+# We execute the file modelo.py
 CMD ["python", "modelo.py"]

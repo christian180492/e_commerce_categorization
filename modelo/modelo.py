@@ -8,8 +8,10 @@ from sklearn.model_selection import RandomizedSearchCV
 
 import pandas as pd
 
+# We read the outputs to have a reference of the output classes.
 y = pd.read_csv('ejemplo_salida.csv')
 
+# We get the stopwords, tokenizer and pretrained word2vec model to proces entrance data.
 from src import text_normalizer
 stop_words = nltk.corpus.stopwords.words("english")
 
@@ -18,8 +20,8 @@ from nltk.tokenize.toktok import ToktokTokenizer
 import gensim.downloader
 pretrained_w2v_model = gensim.downloader.load('glove-wiki-gigaword-300')
 
-# Cargar el modelo al iniciar el script
-ruta_modelo = '/app/modelos/best_moc.pkl'  # Ruta del modelo dentro del contenedor
+# Path to get the model.
+ruta_modelo = '/app/modelos/best_moc.pkl' 
 modelo = None
 
 def normalizacion(oracion):
@@ -34,9 +36,9 @@ def generate_ngrams(tokens, n):
 
 def toktok(oraciones, ninit=1, nfin=1):
     '''
-    oraciones: La lista de oraciones que se desea tokenizar.
-    ninit: Cantidad de ngramas mínimo que uno desea obtener como tokens.
-    nfin: Cantidad de ngramas máximo que uno desea obtener como tokens.
+    oraciones: List of sentences to tokenize.
+    ninit: Minimun amount of ngrams to get from tokens.
+    nfin: Maximun amount of ngrams to get from tokens.
     '''
 
     tokenizer = ToktokTokenizer()
@@ -71,26 +73,32 @@ def vectorizer_pretrained(corpus, model, num_features: int=100):
     return corpus_vectors
 
 def cargar_modelo(ruta_modelo):
-    global modelo  # Utiliza la variable global del modelo
+    global modelo  # We use the global variable modelo.
     with open(ruta_modelo, 'rb') as file:
         modelo = pickle.load(file)
-    print(f"Modelo cargado exitosamente.\n Estos son sus mejores parámetros: ¡¡¡{modelo.best_params_}!!!")
+    print(f"Model uploaded successfully.\n")
 
 def procesar_datos(nombre, descripcion, imagen):
-    # Verificar si el modelo ya ha sido cargado
+    # Verify if the model is loaded.
     if modelo is None:
-        print("El modelo aún no ha sido cargado. Cargando...")
+        print("Charging the model.")
         cargar_modelo(ruta_modelo)
 
-    # Lógica para procesar los datos recibidos y obtener las categorías usando el modelo
+    # Logic to process the received data and obtain the categories using the model
     descripcion_normalizada = normalizacion([descripcion])
-    print(f'\n\nESTA ES LA DESCRIPCIÓN NORMALIZADA {descripcion_normalizada}\n\n')
     descripcion_tokenizada = toktok(descripcion_normalizada, 1, 1)
-    print(f'\n\nESTA ES LA DESCRIPCIÓN TOKENIZADA {descripcion_tokenizada}\n\n')
     descripcion_vectorizada = vectorizer_pretrained(descripcion_tokenizada, pretrained_w2v_model, 300)
-    categoria_binaria = modelo.predict(descripcion_vectorizada)
-    print(categoria_binaria)
+    
+    # We get the probability values of each category
+    predict_proba = modelo.predict_proba(descripcion_vectorizada)
 
+    # We  filter the categories to obtain the ones with probability greater than 0.3
+    prediccion = []
+    for ele in predict_proba:
+        prediccion.append(ele[0][1])
+    categoria_binaria = [[1 if ele > 0.3 else 0 for ele in fila] for fila in [prediccion]]
+
+    # We obtain the categories
     clave_valor = zip(y.columns, categoria_binaria[0])
     diccionario = dict(clave_valor)
 
@@ -99,26 +107,24 @@ def procesar_datos(nombre, descripcion, imagen):
         if valor != 0:
             categorias.append(clave)
 
-    categorias = ['Categoria 1', 'Categoria 2', 'Categoria 3']  # Ejemplo: categorías predichas por el modelo
     return categorias
 
 if __name__ == '__main__':
-    # Conectar a Redis
+    # Connect to Redis
     redis_client = redis.StrictRedis(host='redis', port=6379, db=0)
 
-    # Esperar a que se envíen los datos desde Flask a Redis
+    # Wait for data to be sent from Flask to Redis.
     while not redis_client.exists('producto'):
         pass
 
-    # Obtener los datos desde Redis
+    # Get data from Redis.
     datos = redis_client.hgetall('producto')
     nombre = datos.get(b'nombre').decode('utf-8')
     descripcion = datos.get(b'descripcion').decode('utf-8')
     imagen = datos.get(b'imagen').decode('utf-8') if datos.get(b'imagen') else None
 
-    # Procesar los datos y obtener las categorías
+    # Process the data and get the categories
     categorias = procesar_datos(nombre, descripcion, imagen)
 
-    # Guardar las categorías en Redis
+    # Save categories in Redis
     redis_client.set('categorias', ','.join(categorias))
-

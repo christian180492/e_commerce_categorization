@@ -27,14 +27,7 @@ lemmatizer = WordNetLemmatizer()
 
 def remove_html_tags(text: str) -> str:
     """
-    Remove html tags from text like <br/> , etc. BeautifulSoup for this.
-
-    Args:
-        text : str
-            Input string.
-    Return:
-        str
-            Output string.
+    Remove html tags from text like <br/> , etc.
     """
     texto = BeautifulSoup(text, 'html.parser') 
     return texto.get_text()
@@ -43,23 +36,14 @@ def remove_html_tags(text: str) -> str:
 def stem_text(text: str) -> str:
     """
     Stem input string.
-        - Use `nltk.porter.PorterStemmer`
-        - Use `nltk.tokenize.word_tokenize` for tokenizing the sentence.
-
-    Args:er
-        text : str
-            Input string.
-    Return:
-        str
-            Output string.
     """
-    # Tokenizar el texto en palabras
+    # Tokenize text into words
     tokens = word_tokenize(text)
 
-    # Inicializar el stemmer de Porter
+    # Initialize Porter's stemmer
     stemmer = PorterStemmer()
 
-    # Obtener el stem de cada palabra y unirlos en una cadena de texto
+    # Get the stem of each word and join them in a text string
     stemmed_words = [stemmer.stem(word) for word in tokens]
     output_text = ' '.join(stemmed_words)
     return output_text
@@ -67,21 +51,11 @@ def stem_text(text: str) -> str:
 def lemmatize_text(text: str) -> str:
     """
     Lemmatize input string, tokenizing first and extracting lemma from each text after.
-    (*) Hint: Use `nlp` (spacy model) defined in the beginning for tokenizing
-    and getting lemmas.
-
-    Args:
-        text : str
-            Input string.
-
-    Return:
-        str
-            Output string.
     """
-    # Tokenizar el texto utilizando el modelo nlp de SpaCy
+    # Tokenize the text using SpaCy's nlp model
     doc = nlp(text)
 
-    # Extraer los lemas de cada token y unirlos en una cadena de texto
+    # Extract the lemmas from each token and join them in a text string
     lemmas = [token.lemma_ for token in doc]
     output_text = ' '.join(lemmas)
 
@@ -91,19 +65,11 @@ def lemmatize_text(text: str) -> str:
 def remove_accented_chars(text: str) -> str:
     """
     Remove accents from input string.
-
-    Args:
-        text : str
-            Input string.
-
-    Return:
-        str
-            Output string.
     """
-    # Normalizar el texto para separar los caracteres acentuados en sus componentes
+    # Normalize text to separate accented characters into their components
     normalized_text = unicodedata.normalize('NFKD', text)
 
-    # Filtrar los caracteres que son marcadores de combinación (acentos)
+    # Filter out characters that are combination markers (accents)
     output_text = ''.join(c for c in normalized_text if not unicodedata.combining(c))
 
     return output_text
@@ -112,16 +78,6 @@ def remove_accented_chars(text: str) -> str:
 def remove_special_chars(text: str, remove_digits: Optional[bool] = False) -> str:
     """
     Remove non-alphanumeric characters from input string.
-
-    Args:
-        text : str
-            Input string.
-        remove_digits : bool
-            Remove digits.
-
-    Return:
-        str
-            Output string.
     """
     if remove_digits:
         filtered_doc = re.sub(r'[^A-Za-z\s]+', '',text)
@@ -138,35 +94,21 @@ def remove_stopwords(
 ) -> str:
     """
     Remove stop words using list from input string.
-    (*) Hint: Use tokenizer (ToktokTokenizer) defined in the beginning for
-    tokenization.
-
-    Args:
-        text : str
-            Input string.
-        is_lower_case : bool
-            Flag for lowercase.
-        stopwords : List[str]
-            Stopword list.
-
-    Return:
-        str
-            Output string.
     """
-    # Inicializar el tokenizer
+    # Initialize the tokenizer
     tokenizer = ToktokTokenizer()
 
-    # Tokenizar el texto
+    # Tokenize the text.
     tokens = tokenizer.tokenize(text)
 
-    # Aplicar lowercase si es necesario
+    # Apply lowercase if necessary
     if not is_lower_case:
         tokens = [token.lower() for token in tokens]
 
-    # Filtrar los tokens que no son stopwords si se proporciona la lista de stopwords
+    # Filter out tokens that are not stopwords if the list of stopwords is provided
     filtered_tokens = [token for token in tokens if token not in stopwords]
 
-    # Unir los tokens filtrados en una cadena de texto
+    # Bind the filtered tokens into a text string
     output_text = ' '.join(filtered_tokens)
 
     return output_text
@@ -175,16 +117,8 @@ def remove_stopwords(
 def remove_extra_new_lines(text: str) -> str:
     """
     Remove extra new lines or tab from input string.
-
-    Args:
-        text : str
-            Input string.
-
-    Return:
-        str
-            Output string.
     """
-    # Eliminar líneas adicionales y tabulaciones
+    # Remove extra lines and tabs
     cleaned_text = ' '.join(text.splitlines())
 
     return cleaned_text
@@ -193,16 +127,8 @@ def remove_extra_new_lines(text: str) -> str:
 def remove_extra_whitespace(text: str) -> str:
     """
     Remove any whitespace from input string.
-
-    Args:
-        text : str
-            Input string.
-
-    Return:
-        str
-            Output string.
     """
-    # Eliminar espacios en blanco adicionales
+    # Remove extra whitespace
     cleaned_text = ' '.join(text.split())
 
     return cleaned_text
@@ -211,13 +137,6 @@ def remove_extra_whitespace(text: str) -> str:
 def expand_contractions(text, contraction_mapping=CONTRACTION_MAP) -> str:
     """
     Expand english contractions on input string.
-
-    Args:
-        text : str
-            Input string.
-    Return:
-        str
-            Output string.
     """
     contractions_pattern = re.compile(
         "({})".format("|".join(contraction_mapping.keys())),

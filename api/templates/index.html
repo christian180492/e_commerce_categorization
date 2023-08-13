@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Página de Producto</title>
+    <title>Products Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,21 +40,21 @@
     </style>
 </head>
 <body>
-    <h1>Introduce los datos del producto</h1>
+    <h1>Enter the product data</h1>
     <form method="POST" enctype="multipart/form-data">
-        <label for="nombre">Nombre del producto:</label>
+        <label for="nombre">Product name:</label>
         <input type="text" name="nombre" required>
         <br>
-        <label for="descripcion">Descripción:</label>
+        <label for="descripcion">Description:</label>
         <textarea name="descripcion" required></textarea>
         <br>
-        <label for="imagen">Imagen (opcional):</label>
+        <label for="imagen">Image (optional):</label>
         <input type="file" name="imagen">
         <br>
         <input type="submit" value="Enviar">
     </form>
     <br>
-    <a href="/historial">Ver historial de productos</a>
+    <a href="/historial">View product history</a>
 </body>
 </html>
 

@@ -5,15 +5,15 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# Conectar a Redis
+# Connect to Redis
 redis_client = redis.StrictRedis(host='redis', port=6379, db=0)
 
-# Ruta para almacenar las imágenes
+# Path to store the images
 app.config['UPLOAD_FOLDER'] = 'api/static/imagenes'
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-# Lista para almacenar los productos ingresados
+# List to store the entered products
 productos = []
 
 @app.route('/', methods=['GET', 'POST'])
@@ -23,31 +23,30 @@ def index():
         descripcion = request.form['descripcion']
         imagen = request.files['imagen']
 
-        # Verificar si se subió una imagen
+        # Check if an image was uploaded
         if imagen.filename:
-            # Asegurarse de que el nombre del archivo sea seguro
+            # Make sure the file name is safe
             filename = secure_filename(imagen.filename)
-            # Guardar la imagen en la ruta configurada
+            # Save the image in the configured path
             imagen.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         else:
             filename = None
 
-        # Almacenar los datos en Redis
+        # Store the data in Redis
         producto = {'nombre': nombre_producto, 'descripcion': descripcion}
         if filename is not None:
             producto['imagen'] = filename
 
-        # Enviar los datos a Redis
         redis_client.hmset('producto', producto)
 
-        # Esperar la respuesta de Redis
+        # Wait for the response from Redis
         while not redis_client.exists('categorias'):
             pass
 
-        # Obtener la lista de categorías desde Redis
+        # Get the list of categories from Redis
         categorias = redis_client.get('categorias').decode('utf-8').split(',')
 
-        # Almacenar los datos en la lista de productos
+        # Store the data in the product list
         productos.append({
             'nombre': nombre_producto,
             'descripcion': descripcion,
@@ -55,21 +54,21 @@ def index():
             'categorias': categorias
         })
 
-        # Redireccionar a la página que muestra el último producto ingresado
+        # Redirect to the page that shows the last product entered
         return redirect(url_for('mostrar_producto'))
 
     return render_template('index.html')
 
 @app.route('/productos')
 def mostrar_producto():
-    # Obtener el último producto ingresado
+    # Get the last product entered
     ultimo_producto = productos[-1] if productos else None
-    # Mostrar la página con el último producto ingresado
+    # Show the page with the last product entered
     return render_template('productos.html', producto=ultimo_producto)
 
 @app.route('/historial')
 def mostrar_historial():
-    # Mostrar la página con el historial de productos ingresados
+    # Show the page with the history of entered products
     return render_template('historial.html', productos=productos)
 
 if __name__ == '__main__':

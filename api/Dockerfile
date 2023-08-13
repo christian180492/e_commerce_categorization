@@ -1,18 +1,18 @@
-# Usamos la imagen oficial de Python como base
+# We use the official Python image as a base
 FROM python:3.10
 
-# Copiamos el código de la aplicación en el contenedor
+# We copy the code of the application in the container
 COPY . /app
 
-# Establecemos el directorio de trabajo
+# Set the working directory
 WORKDIR /app
 
-# Instalamos las dependencias de la aplicación
+# Install the application dependencies
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Exponemos el puerto que usará Flask
+# Expose the port that Flask will use
 EXPOSE 5000
 
-# Ejecutamos la aplicación
+# Run the application
 CMD ["python", "app.py"]
 
